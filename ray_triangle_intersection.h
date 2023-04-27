@@ -10,7 +10,7 @@ bool is_point_above_plane(vec3_t point, plane_t plane)
     return vec3_dot_product(vec3_subtract(point, plane.point), plane.normal) > 0.0;
 }
 
-bool intersect_ray_triangle(ray_t ray, triangle_t triangle)
+bool does_ray_intersect_triangle(ray_t ray, triangle_t triangle)
 {
     // Compute edge vectors and normal
     // TODO: pre-compute and store
@@ -26,20 +26,20 @@ bool intersect_ray_triangle(ray_t ray, triangle_t triangle)
     plane_t p2 = {triangle.a, vec3_normalized(vec3_cross_product(e2, normal))};
     plane_t p3 = {triangle.b, vec3_normalized(vec3_cross_product(normal, e3))};
 
-    ray_plane_intersection_result_t r1 = intersect_ray_plane(ray, (plane_t){triangle.a, normal});
+    ray_plane_intersection_result_t result = intersect_ray_plane(ray, (plane_t){triangle.a, normal});
 
-    if (r1.type == RAY_PLANE_NO_INTERSECTION)
+    if (result.type == RAY_PLANE_CONTAINED)
+    {
+        return true;
+    }
+
+    if (result.type != RAY_PLANE_SINGLE_POINT)
     {
         return false;
     }
 
-    if (r1.type == RAY_PLANE_CONTAINED)
-    {
-        // TODO: intersect with auxilary planes
-    }
-
     // Single point
-    vec3_t intersection_point = vec3_add(ray.origin, vec3_multiply_by_scalar(ray.direction, r1.t));
+    vec3_t intersection_point = vec3_add(ray.origin, vec3_multiply_by_scalar(ray.direction, result.t));
 
     return is_point_above_plane(intersection_point, p1) &&
            is_point_above_plane(intersection_point, p2) &&

@@ -14,7 +14,7 @@ int main()
             {
                 ray_t ray = {.origin = {i, j, 10}, .direction = {0, 0, -1}};
                 triangle_t t = {.a = {width / 2, 0, 0}, .b = {width, height, 0}, .c = {0, height, 0}};
-                if (intersect_ray_triangle(ray, t))
+                if (does_ray_intersect_triangle(ray, t))
                     minimal_window_draw_pixel(i, j, 255, 0, 255);
                 else
                     minimal_window_draw_pixel(i, j, 0, 0, 0);
