@@ -21,6 +21,7 @@ typedef struct
     enum ray_plane_intersection_type_t type;
 } ray_plane_intersection_result_t;
 
+// Reference: https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Algebraic_form
 ray_plane_intersection_result_t intersect_ray_plane(ray_t ray, plane_t plane)
 {
     assert(fabsf(vec3_magnitude_squared(ray.direction) - 1.0f) < 0.00001f);
