@@ -22,8 +22,8 @@ bool intersect_ray_triangle(ray_t ray, triangle_t triangle)
     // Compute the triangle's 3 auxilary planes
     // (three planes with normals pointing into the inside of the triangle)
     // TODO: pre-compute and store
-    plane_t p1 = {triangle.a, vec3_normalized(vec3_cross_product(e1, normal))};
-    plane_t p2 = {triangle.a, vec3_normalized(vec3_cross_product(normal, e2))};
+    plane_t p1 = {triangle.a, vec3_normalized(vec3_cross_product(normal, e1))};
+    plane_t p2 = {triangle.a, vec3_normalized(vec3_cross_product(e2, normal))};
     plane_t p3 = {triangle.b, vec3_normalized(vec3_cross_product(normal, e3))};
 
     ray_plane_intersection_result_t r1 = intersect_ray_plane(ray, (plane_t){triangle.a, normal});
