@@ -15,16 +15,16 @@ bool does_ray_intersect_triangle(ray_t ray, triangle_t triangle)
     // Compute edge vectors and normal
     // TODO: pre-compute and store
     vec3_t e1 = vec3_subtract(triangle.b, triangle.a);
-    vec3_t e2 = vec3_subtract(triangle.c, triangle.a);
-    vec3_t e3 = vec3_subtract(triangle.c, triangle.b);
+    vec3_t e2 = vec3_subtract(triangle.c, triangle.b);
+    vec3_t e3 = vec3_subtract(triangle.a, triangle.c);
     vec3_t normal = vec3_normalized(vec3_cross_product(e1, e2));
 
     // Compute the triangle's 3 auxilary planes
     // (three planes with normals pointing into the inside of the triangle)
     // TODO: pre-compute and store
     plane_t p1 = {triangle.a, vec3_normalized(vec3_cross_product(normal, e1))};
-    plane_t p2 = {triangle.a, vec3_normalized(vec3_cross_product(e2, normal))};
-    plane_t p3 = {triangle.b, vec3_normalized(vec3_cross_product(normal, e3))};
+    plane_t p2 = {triangle.b, vec3_normalized(vec3_cross_product(normal, e2))};
+    plane_t p3 = {triangle.c, vec3_normalized(vec3_cross_product(normal, e3))};
 
     ray_plane_intersection_result_t result = intersect_ray_plane(ray, (plane_t){triangle.a, normal});
 
