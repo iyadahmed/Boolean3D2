@@ -7,7 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED YES)
 set(CMAKE_C_EXTENSIONS NO)
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    add_compile_options(-Ofast -Wall -Wextra -m64 -march=native -mtune=native)
+    add_compile_options(-Ofast -Wall -Wextra -march=native -mtune=native)
 endif()
 
 add_subdirectory(minimal_window)
