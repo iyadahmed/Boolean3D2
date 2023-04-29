@@ -70,7 +70,7 @@ int main()
         }
 
         end = clock();
-        printf("\rFrame time: %f ms", (end - start) / (float)CLK_TCK);
+        printf("\rFrame time: %f ms", (end - start) / (float)CLOCKS_PER_SEC);
         // https://stackoverflow.com/a/20947311/8094047
         fflush(stdout);
     }
