@@ -1,3 +1,5 @@
+#include <omp.h>
+
 #include <minimal_window.h>
 
 #include "ray_triangle_intersection.h"
@@ -15,11 +17,14 @@ int main()
 
     while (minimal_window_process_events())
     {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
+        int i = 0, j = 0;
 
+// https://stackoverflow.com/a/39019028/8094047?stw=2
+#pragma omp parallel for firstprivate(i, j)
+        for (i = 0; i < width; i++)
+        {
+            for (j = 0; j < height; j++)
+            {
                 if (use_antialiasing)
                 {
                     float sample_spacing = 1.0f / 3.0f;

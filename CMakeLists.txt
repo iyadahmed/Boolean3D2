@@ -16,3 +16,9 @@ find_library(LIB_MATH m)
 if(LIB_MATH)
     target_link_libraries(boolean3d PRIVATE ${LIB_MATH})
 endif()
+
+find_package(OpenMP)
+
+if(OpenMP_C_FOUND)
+    target_link_libraries(boolean3d PRIVATE OpenMP::OpenMP_C)
+endif()
