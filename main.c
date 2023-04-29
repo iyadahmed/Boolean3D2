@@ -70,7 +70,8 @@ int main()
         }
 
         end = clock();
-        printf("\rFrame time: %f ms", (end - start) / (float)CLOCKS_PER_SEC);
+        // Some spaces at the end to clear the line
+        printf("\rFrame time: %ld ms                   ", ((end - start) * 1000) / CLOCKS_PER_SEC);
         // https://stackoverflow.com/a/20947311/8094047
         fflush(stdout);
     }
