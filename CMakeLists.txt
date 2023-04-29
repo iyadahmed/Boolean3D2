@@ -6,6 +6,10 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED YES)
 set(CMAKE_C_EXTENSIONS NO)
 
+if(CMAKE_COMPILER_IS_GNUCC)
+    add_compile_options(-Ofast -Wall -Wextra -m64 -march=native -mtune=native)
+endif()
+
 add_subdirectory(minimal_window)
 
 add_executable(boolean3d main.c)
