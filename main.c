@@ -6,7 +6,7 @@
 
 #include "ray_triangle_intersection.h"
 
-#define USE_OPENMP 0
+#define USE_OPENMP 1
 
 int main()
 {
