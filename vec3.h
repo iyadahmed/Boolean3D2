@@ -13,22 +13,22 @@ typedef union
 
 vec3_t vec3_add(vec3_t a, vec3_t b)
 {
-    return (vec3_t){a.x + b.x, a.y + b.y, a.z + b.z};
+    return (vec3_t){{a.x + b.x, a.y + b.y, a.z + b.z}};
 }
 
 vec3_t vec3_subtract(vec3_t a, vec3_t b)
 {
-    return (vec3_t){a.x - b.x, a.y - b.y, a.z - b.z};
+    return (vec3_t){{a.x - b.x, a.y - b.y, a.z - b.z}};
 }
 
 vec3_t vec3_divide_by_scalar(vec3_t v, float s)
 {
-    return (vec3_t){v.x / s, v.y / s, v.z / s};
+    return (vec3_t){{v.x / s, v.y / s, v.z / s}};
 }
 
 vec3_t vec3_multiply_by_scalar(vec3_t v, float s)
 {
-    return (vec3_t){v.x * s, v.y * s, v.z * s};
+    return (vec3_t){{v.x * s, v.y * s, v.z * s}};
 }
 
 float vec3_dot_product(vec3_t a, vec3_t b)
@@ -57,5 +57,5 @@ vec3_t vec3_cross_product(vec3_t a, vec3_t b)
     float x = a.y * b.z - a.z * b.y;
     float y = a.z * b.x - a.x * b.z;
     float z = a.x * b.y - a.y * b.x;
-    return (vec3_t){x, y, z};
+    return (vec3_t){{x, y, z}};
 }
