@@ -9,6 +9,7 @@ int main()
 
     triangle_t triangle = {.a = {width / 2, 0, 0}, .b = {width, height, 0}, .c = {0, height, 0}};
     vec3_t ray_direction = {0, 0, -1};
+    triangle_ex_t triangle_ex = compute_triangle_extra_data(triangle);
 
     bool use_antialiasing = true;
 
@@ -32,7 +33,7 @@ int main()
                             vec3_t offset = {io * sample_spacing, jo * sample_spacing, 0.0f};
                             vec3_t ray_origin = vec3_add(sample_start, offset);
                             ray_t ray = {ray_origin, ray_direction};
-                            avg += (float)does_ray_intersect_triangle(ray, triangle) / 9.0f;
+                            avg += (float)does_ray_intersect_triangle(ray, triangle_ex) / 9.0f;
                         }
                     }
 
@@ -41,7 +42,7 @@ int main()
                 else
                 {
                     ray_t ray = {.origin = {(float)i + 0.5f, (float)j + 0.5f, 10}, .direction = {0, 0, -1}};
-                    if (does_ray_intersect_triangle(ray, triangle))
+                    if (does_ray_intersect_triangle(ray, triangle_ex))
                     {
                         minimal_window_draw_pixel(i, j, 255, 0, 255);
                     }
