@@ -1,8 +1,12 @@
 #include <omp.h>
+#include <stdio.h>
+#include <time.h>
 
 #include <minimal_window.h>
 
 #include "ray_triangle_intersection.h"
+
+#define USE_OPENMP 0
 
 int main()
 {
@@ -19,8 +23,14 @@ int main()
     {
         int i, j;
 
+        // https://learncplusplus.org/how-to-make-a-millisecond-timer-in-c-and-c/
+        clock_t start, end;
+        start = clock();
+
 // https://stackoverflow.com/a/39019028/8094047?stw=2
+#if USE_OPENMP
 #pragma omp parallel for lastprivate(i, j)
+#endif
         for (i = 0; i < width; i++)
         {
             for (j = 0; j < height; j++)
@@ -58,6 +68,12 @@ int main()
                 }
             }
         }
+
+        end = clock();
+        printf("\rFrame time: %f ms", (end - start) / (float)CLK_TCK);
+        // https://stackoverflow.com/a/20947311/8094047
+        fflush(stdout);
     }
+    putchar('\n');
     return 0;
 }
