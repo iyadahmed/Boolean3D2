@@ -17,10 +17,10 @@ int main()
 
     while (minimal_window_process_events())
     {
-        int i = 0, j = 0;
+        int i, j;
 
 // https://stackoverflow.com/a/39019028/8094047?stw=2
-#pragma omp parallel for firstprivate(i, j)
+#pragma omp parallel for lastprivate(i, j)
         for (i = 0; i < width; i++)
         {
             for (j = 0; j < height; j++)
