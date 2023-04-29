@@ -18,16 +18,14 @@ bool does_ray_intersect_triangle(ray_t ray, triangle_ex_t triangle)
     {
         return true;
     }
-
-    if (result.type != RAY_PLANE_SINGLE_POINT)
+    else if (result.type == RAY_PLANE_SINGLE_POINT)
     {
-        return false;
+        vec3_t intersection_point = vec3_add(ray.origin, vec3_multiply_by_scalar(ray.direction, result.t));
+
+        return is_point_above_plane(intersection_point, triangle.auxilary_planes[0]) &&
+               is_point_above_plane(intersection_point, triangle.auxilary_planes[1]) &&
+               is_point_above_plane(intersection_point, triangle.auxilary_planes[2]);
     }
 
-    // Single point
-    vec3_t intersection_point = vec3_add(ray.origin, vec3_multiply_by_scalar(ray.direction, result.t));
-
-    return is_point_above_plane(intersection_point, triangle.auxilary_planes[0]) &&
-           is_point_above_plane(intersection_point, triangle.auxilary_planes[1]) &&
-           is_point_above_plane(intersection_point, triangle.auxilary_planes[2]);
+    return false;
 }
