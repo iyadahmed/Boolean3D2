@@ -38,7 +38,7 @@ int main()
                 if (use_antialiasing)
                 {
                     float sample_spacing = 1.0f / 3.0f;
-                    vec3_t sample_start = {{(float)i + sample_spacing, (float)j + sample_spacing, 10}};
+                    vec3_t sample_start = {{(float)i + sample_spacing / 2, (float)j + sample_spacing / 2, 10}};
 
                     float avg = 0.0f;
                     for (int io = 0; io < 3; io++)
