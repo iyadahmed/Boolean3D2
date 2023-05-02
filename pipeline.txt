@@ -1,0 +1,56 @@
+Pseudo code of the planned boolean pipeline:
+
+intersections = vector of objects with result and triangle_index fields
+# Result is an edge-net, an edge-net is a mesh data structure that only has vertices and edges, no triangles
+
+mesh1 = read_mesh_from_file(file1) # Tag every triangle to indicate it belongs to 1st mesh
+mesh2 = read_mesh_from_file(file2) # Tag every triangle to indicate it belongs to 2nd mesh
+combined_mesh = mesh1 + mesh2
+
+bvh = build_bvh(combined_mesh)
+
+# Compute self intersections
+for i, t in enumerate(tris):
+    result = bvh.intersect(t)
+    intersections.append({result=result, triangle_index=i})
+
+# Sort intersections so that intersections a triangle are consecutive
+intersections.sort(key=by value of triangle_index)
+
+# Linear scan intersections and re-triangulate triangles to include the new edges and vertices that resulted from intersection
+current_start = 0
+current_end = 0
+
+# Add sentinel
+intersections.append({result=null, triangle_index=-1})
+
+# TODO: double linear scanning logic
+while True:
+    next = current_start + 1
+    if intersections[next].triangle_index == -1:
+        break
+    elif intersections[next].triangle_index != intersections[current_end].triangle_index:
+        local_intersections = intersections[current_start:current_end].copy() # range is inclusive
+
+        edge_net net = join(local_intersections) + combined_mesh.tris[current_start].as_edge_net()
+        mesh = triangulate_and_deduplicate_vertices(net)
+        # Notes about the previous line:
+        - We can triangulate by sorting vertices and connecting them
+        - However we also want to keep original edges
+        - So we must build a map (EDGE_MAP) that maps every vertex to a linked list of the edges connected to it
+        - That way, during connection of vertices, we can first check if the vertex is very close, if so,
+            it is a duplicate and should be handled and update the (EDGE_MAP)
+        - If it is not a duplicate, we loop through ring edges and see if we are colinear with one of them,
+            if we so we split it and update the (EDGE_MAP)
+        We could at first skip that and just triangulate or even export loose edges to see if everything works
+
+        # Optional but makes the mesh nicer
+        mesh = constrained_delaunay(mesh)
+
+        combined_mesh.tris.remove(intersections[current_end].triangle_index)
+        combined_mesh.tris.add(mesh.tris)
+        current_start = next
+    else:
+        current_end += 1
+
+# By this line self intersections should have been resolved

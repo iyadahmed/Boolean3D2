@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Boolean3D)
+project(boolean_3d)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED YES)
@@ -11,18 +11,28 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU")
 endif()
 
 add_subdirectory(minimal_window)
-
-add_executable(boolean3d main.c)
-target_link_libraries(boolean3d PRIVATE minimal_window)
-
 find_library(LIB_MATH m)
+find_package(OpenMP REQUIRED)
+
+#
+# Raytraced Triangle
+#
+add_executable(raytraced_triangle raytraced_triangle.c)
+target_link_libraries(raytraced_triangle PRIVATE minimal_window)
 
 if(LIB_MATH)
-    target_link_libraries(boolean3d PRIVATE ${LIB_MATH})
+    target_link_libraries(raytraced_triangle PRIVATE ${LIB_MATH})
 endif()
 
-find_package(OpenMP)
-
 if(OpenMP_C_FOUND)
-    target_link_libraries(boolean3d PRIVATE OpenMP::OpenMP_C)
+    target_link_libraries(raytraced_triangle PRIVATE OpenMP::OpenMP_C)
+endif()
+
+#
+# Boolean3D
+#
+add_executable(boolean_3d boolean_3d.c)
+
+if(LIB_MATH)
+    target_link_libraries(boolean_3d PRIVATE ${LIB_MATH})
 endif()

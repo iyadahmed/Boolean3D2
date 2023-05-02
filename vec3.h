@@ -59,3 +59,8 @@ vec3_t vec3_cross_product(vec3_t a, vec3_t b)
     float z = a.x * b.y - a.y * b.x;
     return (vec3_t){{x, y, z}};
 }
+
+bool vec3_almost_equal(vec3_t a, vec3_t b)
+{
+    return vec3_magnitude_squared(vec3_subtract(a, b)) < 0.00001;
+}

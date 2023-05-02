@@ -36,3 +36,10 @@ triangle_ex_t compute_triangle_extra_data(triangle_t triangle)
 
     return (triangle_ex_t){triangle, {e1, e2, e3}, normal, {p1, p2, p3}};
 }
+
+bool is_point_inside_triangle(vec3_t p, triangle_ex_t t)
+{
+    return is_point_above_plane(p, t.auxilary_planes[0]) &&
+           is_point_above_plane(p, t.auxilary_planes[1]) &&
+           is_point_above_plane(p, t.auxilary_planes[2]);
+}
