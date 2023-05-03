@@ -16,7 +16,7 @@ bool does_ray_intersect_triangle(ray_t ray, triangle_ex_t triangle)
     else if (result.type == RAY_PLANE_SINGLE_POINT)
     {
         vec3_t intersection_point = vec3_add(ray.origin, vec3_multiply_by_scalar(ray.direction, result.t));
-        return is_point_inside_triangle(intersection_point, triangle);
+        return is_point_inside_triangle_prism(intersection_point, triangle);
     }
 
     return false;
