@@ -6,10 +6,6 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED YES)
 set(CMAKE_C_EXTENSIONS NO)
 
-if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    add_compile_options(-Ofast -Wall -Wextra -march=native -mtune=native)
-endif()
-
 add_subdirectory(minimal_window)
 find_library(LIB_MATH m)
 find_package(OpenMP REQUIRED)
