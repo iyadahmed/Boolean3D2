@@ -2,9 +2,21 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #include "triangle.h"
 #include "triangle_triangle_intersection.h"
+
+static ray_t ray_from_triangle_edge(triangle_ex_t t, int edge_index)
+{
+    assert(edge_index == 0 || edge_index == 1 || edge_index == 2);
+    return (ray_t){t.triangle.vertices[edge_index], t.edge_vectors[edge_index]};
+}
+
+static plane_t triangle_plane(triangle_ex_t t)
+{
+    return (plane_t){t.triangle.a, t.normal};
+}
 
 int main(int argc, char **argv)
 {
@@ -61,14 +73,32 @@ int main(int argc, char **argv)
             triangle_ex_t t2 = tris[j];
 
             puts("##################");
+            vec3_t intersection_points[3];
+            int intersection_points_count = 0;
             for (int vi = 0; vi < 3; vi++)
             {
-                ray_t ray = {t1.triangle.vertices[vi], t1.edge_vectors[vi]};
-                ray_plane_intersection_result_t bar = intersect_ray_plane(ray, (plane_t){t2.triangle.a, t2.normal});
-                if (bar.type == RAY_PLANE_SINGLE_POINT)
+                ray_t ray = ray_from_triangle_edge(t1, vi);
+                plane_t plane = triangle_plane(t2);
+                ray_plane_intersection_result_t intersection_result = intersect_ray_plane(ray, plane);
+                if (intersection_result.type == RAY_PLANE_SINGLE_POINT)
                 {
-                    vec3_t p = point_along_ray(ray, bar.t);
+                    vec3_t p = point_along_ray(ray, intersection_result.t);
+                    intersection_points[intersection_points_count++] = p;
                     printf("%f, %f, %f\n", p.x, p.y, p.z);
+                }
+            }
+
+            vec3_t inverse_intersection_points[3];
+            int inverse_intersection_points_count = 0;
+            for (int vi = 0; vi < 3; vi++)
+            {
+                ray_t ray = ray_from_triangle_edge(t2, vi);
+                plane_t plane = triangle_plane(t1);
+                ray_plane_intersection_result_t intersection_result = intersect_ray_plane(ray, plane);
+                if (intersection_result.type == RAY_PLANE_SINGLE_POINT)
+                {
+                    vec3_t p = point_along_ray(ray, intersection_result.t);
+                    inverse_intersection_points[inverse_intersection_points_count++] = p;
                 }
             }
         }
