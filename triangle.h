@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include "vec3.h"
 #include "plane.h"
 
