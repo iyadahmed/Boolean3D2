@@ -29,10 +29,12 @@ triangle_ex_t compute_triangle_extra_data(triangle_t triangle)
     vec3_t e1 = vec3_normalized(vec3_subtract(triangle.b, triangle.a));
     vec3_t e2 = vec3_normalized(vec3_subtract(triangle.c, triangle.b));
     vec3_t e3 = vec3_normalized(vec3_subtract(triangle.a, triangle.c));
-    vec3_t normal = vec3_cross_product(e1, e2);
+    vec3_t normal = vec3_normalized(vec3_cross_product(e1, e2));
 
     // Compute the triangle's 3 auxilary planes
-    // (three planes with normals pointing into the inside of the triangle)
+    // (three planes with normals pointing into the inside of the triangle),
+    // Note: there is no need to normalize result of cross product if input vectors are unit vectors and orthogonal:
+    // https://math.stackexchange.com/a/23261/691043
     plane_t p1 = {triangle.a, vec3_cross_product(normal, e1)};
     plane_t p2 = {triangle.b, vec3_cross_product(normal, e2)};
     plane_t p3 = {triangle.c, vec3_cross_product(normal, e3)};
