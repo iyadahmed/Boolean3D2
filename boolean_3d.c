@@ -8,6 +8,7 @@
 #include "small_array.h"
 #include "ray.h"
 #include "ray_plane_intersection.h"
+#include "bitwise.h"
 
 static ray_t ray_from_triangle_edge(triangle_ex_t t, int edge_index)
 {
@@ -34,12 +35,72 @@ vec3_t_3 intersect_triangle_edges_with_other_triangle(triangle_ex_t t1, triangle
         if (intersection_result.type == RAY_PLANE_SINGLE_POINT)
         {
             vec3_t p = point_along_ray(ray, intersection_result.t);
-            PUSH_TO_SMALL_ARRAY(&result, p);
-            printf("%f, %f, %f\n", p.x, p.y, p.z);
+            if (is_point_inside_triangle_prism(p, t2))
+            {
+                PUSH_TO_SMALL_ARRAY(&result, p);
+            }
         }
     }
 
     return result;
+}
+
+bool is_one_of_triangle_vertices(vec3_t p, triangle_t t)
+{
+    return vec3_almost_equal(p, t.a) || vec3_almost_equal(p, t.b) || vec3_almost_equal(p, t.c);
+}
+
+void clear_if_degenerates_to_triangle_edge_or_vertex(vec3_t_3 *points, triangle_t t)
+{
+    int counter = 0;
+    for (int i = 0; i < points->occupied; i++)
+    {
+        if (is_one_of_triangle_vertices(points->array[i], t))
+        {
+            counter++;
+        }
+    }
+    if (counter == points->occupied)
+    {
+        CLEAR_SMALL_ARRAY(points);
+    }
+}
+
+vec3_t_3 deduplicate_points(vec3_t_3 *points)
+{
+    CREATE_SMALL_ARRAY(vec3_t_3, result);
+    for (int i = 0; i < points->occupied; i++)
+    {
+        vec3_t p = points->array[i];
+        bool already_added = false;
+        for (int j = 0; j < result.occupied; j++)
+        {
+            if (vec3_almost_equal(p, result.array[j]))
+            {
+                already_added = true;
+                break;
+            }
+        }
+        if (!already_added)
+        {
+            PUSH_TO_SMALL_ARRAY(&result, p);
+        }
+    }
+    return result;
+}
+
+void vec3_print(vec3_t v)
+{
+    printf("%f, %f, %f", v.x, v.y, v.z);
+}
+
+void vec3_t_3_print(vec3_t_3 *points)
+{
+    for (int i = 0; i < points->occupied; i++)
+    {
+        vec3_print(points->array[i]);
+        putchar('\n');
+    }
 }
 
 int main(int argc, char **argv)
@@ -100,10 +161,36 @@ int main(int argc, char **argv)
         {
             triangle_ex_t t2 = triangles[j];
 
-            vec3_t_3 intersection_points_forward = intersect_triangle_edges_with_other_triangle(t1, t2);
-            assert(intersection_points_forward.occupied <= 2);
-            vec3_t_3 intersection_points_reverse = intersect_triangle_edges_with_other_triangle(t2, t1);
-            assert(intersection_points_reverse.occupied <= 2);
+            // Forward and reverse intersection points
+            vec3_t_3 forward = intersect_triangle_edges_with_other_triangle(t1, t2);
+            vec3_t_3 reverse = intersect_triangle_edges_with_other_triangle(t2, t1);
+            assert(forward.occupied <= 2);
+            assert(reverse.occupied <= 2);
+
+            // Clear small arrays if they are just edges that already exist
+            if (forward.occupied == 2)
+            {
+                clear_if_degenerates_to_triangle_edge_or_vertex(&forward, t2.triangle);
+            }
+            if (reverse.occupied == 2)
+            {
+                clear_if_degenerates_to_triangle_edge_or_vertex(&reverse, t1.triangle);
+            }
+
+            // Deduplicate points (should help in degenerate cases)
+            forward = deduplicate_points(&forward);
+            reverse = deduplicate_points(&reverse);
+
+            if (forward.occupied > 0 || reverse.occupied > 0)
+            {
+                puts("############");
+                printf("T1: %d, T2: %d\n", i, j);
+                puts("Forward:");
+                vec3_t_3_print(&forward);
+                puts("Reverse:");
+                vec3_t_3_print(&reverse);
+            }
+            // TODO: continue
         }
     }
 

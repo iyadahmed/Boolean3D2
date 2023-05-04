@@ -21,3 +21,6 @@
     assert((small_array)->occupied < (sizeof((small_array)->array) / sizeof((small_array)->array[0]))); \
     (small_array)->array[(small_array)->occupied++] =                                                   \
         __VA_ARGS__;
+
+#define CLEAR_SMALL_ARRAY(small_array) \
+    (small_array)->occupied = 0;
