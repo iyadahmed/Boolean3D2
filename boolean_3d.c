@@ -8,7 +8,6 @@
 #include "small_array.h"
 #include "ray.h"
 #include "ray_plane_intersection.h"
-#include "bitwise.h"
 
 static ray_t ray_from_triangle_edge(triangle_ex_t t, int edge_index)
 {
