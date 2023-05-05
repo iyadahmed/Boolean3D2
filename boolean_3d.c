@@ -102,6 +102,38 @@ void vec3_t_3_print(vec3_t_3 *points)
     }
 }
 
+void triangle_triangle_intersection_non_coplanar(triangle_ex_t t1, triangle_ex_t t2)
+{
+    // Forward and reverse intersection points
+    vec3_t_3 forward = intersect_triangle_edges_with_other_triangle(t1, t2);
+    vec3_t_3 reverse = intersect_triangle_edges_with_other_triangle(t2, t1);
+    assert(forward.occupied <= 2);
+    assert(reverse.occupied <= 2);
+
+    // Clear small arrays if they are just edges that already exist
+    if (forward.occupied == 2)
+    {
+        clear_if_degenerates_to_triangle_edge_or_vertex(&forward, t2.triangle);
+    }
+    if (reverse.occupied == 2)
+    {
+        clear_if_degenerates_to_triangle_edge_or_vertex(&reverse, t1.triangle);
+    }
+
+    // Deduplicate points (should help in degenerate cases)
+    forward = deduplicate_points(&forward);
+    reverse = deduplicate_points(&reverse);
+
+    if (forward.occupied > 0 || reverse.occupied > 0)
+    {
+        puts("Forward:");
+        vec3_t_3_print(&forward);
+        puts("Reverse:");
+        vec3_t_3_print(&reverse);
+    }
+    // TODO: continue
+}
+
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -159,37 +191,9 @@ int main(int argc, char **argv)
         for (uint32_t j = 0; j < num_triangles; j++)
         {
             triangle_ex_t t2 = triangles[j];
-
-            // Forward and reverse intersection points
-            vec3_t_3 forward = intersect_triangle_edges_with_other_triangle(t1, t2);
-            vec3_t_3 reverse = intersect_triangle_edges_with_other_triangle(t2, t1);
-            assert(forward.occupied <= 2);
-            assert(reverse.occupied <= 2);
-
-            // Clear small arrays if they are just edges that already exist
-            if (forward.occupied == 2)
-            {
-                clear_if_degenerates_to_triangle_edge_or_vertex(&forward, t2.triangle);
-            }
-            if (reverse.occupied == 2)
-            {
-                clear_if_degenerates_to_triangle_edge_or_vertex(&reverse, t1.triangle);
-            }
-
-            // Deduplicate points (should help in degenerate cases)
-            forward = deduplicate_points(&forward);
-            reverse = deduplicate_points(&reverse);
-
-            if (forward.occupied > 0 || reverse.occupied > 0)
-            {
-                puts("############");
-                printf("T1: %d, T2: %d\n", i, j);
-                puts("Forward:");
-                vec3_t_3_print(&forward);
-                puts("Reverse:");
-                vec3_t_3_print(&reverse);
-            }
-            // TODO: continue
+            puts("############");
+            printf("T1: %d, T2: %d\n", i, j);
+            triangle_triangle_intersection_non_coplanar(t1, t2);
         }
     }
 
