@@ -5,7 +5,7 @@
 #include <assert.h>
 
 #include "triangle.h"
-#include "small_array.h"
+#include "c_utils/small_array.h"
 #include "ray.h"
 #include "ray_plane_intersection.h"
 
