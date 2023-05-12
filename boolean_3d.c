@@ -49,6 +49,31 @@ static int order_invariant_intersection_result_compare(const void* av, const voi
 	return 0;
 }
 
+
+static int intersection_result_compare(const void* av, const void* bv) {
+	const self_intersection_result_t* a = av;
+	const self_intersection_result_t* b = bv;
+
+	size_t a_t1_index = a->t1_index;
+	size_t a_t2_index = a->t2_index;
+
+	size_t b_t1_index = b->t1_index;
+	size_t b_t2_index = b->t2_index;
+
+
+	if (a_t1_index == b_t1_index && a_t2_index == b_t2_index) {
+		return 0;
+	}
+	if (a_t1_index < b_t1_index || (a_t1_index == b_t1_index && a_t2_index < b_t2_index)) {
+		return -1;
+	}
+	if (a_t1_index > b_t1_index || (a_t1_index == b_t1_index && a_t2_index > b_t2_index)) {
+		return 1;
+	}
+	assert_unreachable();
+	return 0;
+}
+
 static ray_t ray_from_triangle_edge(triangle_ex_t t, int edge_index)
 {
 	assert(edge_index == 0 || edge_index == 1 || edge_index == 2);
@@ -214,7 +239,7 @@ int main(int argc, char** argv)
 	if (!openmp_dynamic_array_init(&results, sizeof(self_intersection_result_t))) {
 		puts("Failed to create dynamic array");
 		return 0;
-	}
+}
 
 	//
 	// Do self intersection
@@ -253,8 +278,8 @@ int main(int argc, char** argv)
 					}
 					else
 					{
-						r.t1_index = i;
-						r.t2_index = j;
+						r.t1_index = min(i, j);
+						r.t2_index = max(i, j);
 						openmp_dynamic_array_append(&results, &r);
 					}
 				}
@@ -272,7 +297,8 @@ int main(int argc, char** argv)
 	//puts("");
 
 	// Sort results array
-	qsort(results.data, results.size, sizeof(self_intersection_result_t), order_invariant_intersection_result_compare);
+	//qsort(results.data, results.size, sizeof(self_intersection_result_t), order_invariant_intersection_result_compare);
+	qsort(results.data, results.size, sizeof(self_intersection_result_t), intersection_result_compare);
 
 	//for (size_t i = 0; i < results.size; i++)
 	//{
@@ -294,7 +320,7 @@ int main(int argc, char** argv)
 	{
 		size_t j = i + 1;
 		while (j < n &&
-			(order_invariant_intersection_result_compare(openmp_dynamic_array_get(&results, i), openmp_dynamic_array_get(&results, j)) == 0)) {
+			(intersection_result_compare(openmp_dynamic_array_get(&results, i), openmp_dynamic_array_get(&results, j)) == 0)) {
 			j++;
 		}
 		puts("#########");
@@ -317,4 +343,4 @@ int main(int argc, char** argv)
 
 	free(triangles);
 	return 0;
-}
+	}
