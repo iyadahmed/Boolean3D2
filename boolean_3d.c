@@ -274,22 +274,43 @@ int main(int argc, char** argv)
 	// Sort results array
 	qsort(results.data, results.size, sizeof(self_intersection_result_t), order_invariant_intersection_result_compare);
 
-	for (size_t i = 0; i < results.size; i++)
-	{
-		self_intersection_result_t* sr = openmp_dynamic_array_get(&results, i);
-		printf("(%llu, %llu) ", sr->t1_index, sr->t2_index);
-		vec3_print(sr->point);
-		puts("");
-		//printf("%f, %f, %f\n", sr->point.x, sr->point.y, sr->point.z);
-	}
-	puts("");
+	//for (size_t i = 0; i < results.size; i++)
+	//{
+	//	self_intersection_result_t* sr = openmp_dynamic_array_get(&results, i);
+	//	printf("(%llu, %llu) ", sr->t1_index, sr->t2_index);
+	//	vec3_print(sr->point);
+	//	puts("");
+	//	//printf("%f, %f, %f\n", sr->point.x, sr->point.y, sr->point.z);
+	//}
+	//puts("");
 
 	printf("%llu\n", results.size);
 
 
 	// Cluster
-	for (size_t i = 0; i < results.size; i++) {
-		// TODO
+	size_t i = 0;
+	size_t n = results.size;
+	while (i < n)
+	{
+		size_t j = i + 1;
+		while (j < n &&
+			(order_invariant_intersection_result_compare(openmp_dynamic_array_get(&results, i), openmp_dynamic_array_get(&results, j)) == 0)) {
+			j++;
+		}
+		puts("#########");
+
+		// Triangulate
+		for (int k = i; k < j; k++) {
+			self_intersection_result_t* sr = openmp_dynamic_array_get(&results, k);
+			printf("(%llu, %llu) ", sr->t1_index, sr->t2_index);
+			vec3_print(sr->point);
+			puts("");
+			// TODO, triangulate once for t1 and once for t2
+		}
+
+		puts("#########");
+
+		i = j;
 	}
 
 	openmp_dynamic_array_destroy(&results);
