@@ -1,9 +1,11 @@
 #pragma once
 
 #include <stdbool.h>
+#include <math.h>
 
 #include "vec3.h"
 #include "plane.h"
+#include "aabb.h"
 
 typedef union
 {
@@ -21,6 +23,7 @@ typedef struct
     vec3_t edge_vectors[3]; // Normalized edge vectors
     vec3_t normal;
     plane_t auxilary_planes[3]; // Planes with normals pointing towards the inside of the triangle
+    aabb_2d_t aabb_2d;
 } triangle_ex_t;
 
 triangle_ex_t compute_triangle_extra_data(triangle_t triangle)
@@ -39,7 +42,14 @@ triangle_ex_t compute_triangle_extra_data(triangle_t triangle)
     plane_t p2 = {triangle.b, vec3_cross_product(normal, e2)};
     plane_t p3 = {triangle.c, vec3_cross_product(normal, e3)};
 
-    return (triangle_ex_t){triangle, {e1, e2, e3}, normal, {p1, p2, p3}};
+    aabb_2d_t aabb_2d;
+    aabb_2d.x_max = max(max(triangle.a.x, triangle.b.x), triangle.c.x);
+    aabb_2d.x_min = min(min(triangle.a.x, triangle.b.x), triangle.c.x);
+
+    aabb_2d.y_max = max(max(triangle.a.y, triangle.b.y), triangle.c.y);
+    aabb_2d.y_min = min(min(triangle.a.y, triangle.b.y), triangle.c.y);
+
+    return (triangle_ex_t){triangle, {e1, e2, e3}, normal, {p1, p2, p3}, aabb_2d};
 }
 
 bool is_point_inside_triangle_prism(vec3_t p, triangle_ex_t t)

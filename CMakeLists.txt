@@ -23,7 +23,7 @@ add_library(boolean_3d_lib INTERFACE
     include/thread_safe_dynamic_array.h
     include/triangle.h
     include/vec3.h
-)
+ "include/aabb.h" "include/aabb_triangle_intersection.h")
 target_include_directories(boolean_3d_lib INTERFACE include)
 target_link_libraries(boolean_3d_lib INTERFACE c_utils)
 set_target_properties(boolean_3d_lib PROPERTIES
