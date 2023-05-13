@@ -57,8 +57,8 @@ bool openmp_dynamic_array_append(OpenMPDynamicArray* array, void* value)
 	size_t size;
 	size_t capacity;
 
-#pragma omp atomic capture
-	size = array->size++;
+#pragma omp atomic read
+	size = array->size;
 
 	capacity = array->capacity;
 
@@ -78,6 +78,10 @@ bool openmp_dynamic_array_append(OpenMPDynamicArray* array, void* value)
 	}
 
 	memcpy((char*)array->data + size * array->element_size, value, array->element_size);
+
+#pragma omp atomic update
+    array->size++;
+
 	return true;
 }
 
