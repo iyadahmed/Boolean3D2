@@ -87,12 +87,12 @@ bool openmp_dynamic_array_append(OpenMPDynamicArray *array, void *value)
 
 void *openmp_dynamic_array_get(OpenMPDynamicArray *array, size_t index)
 {
-    size_t size;
-
+#ifndef NDEBUG
 #pragma omp atomic read
-    size = array->size;
-
+    size_t size = array->size;
     assert(index < size);
+#endif
+
     return (char *)array->data + index * array->element_size;
 }
 
