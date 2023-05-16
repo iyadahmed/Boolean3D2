@@ -287,8 +287,13 @@ int main(int argc, char** argv)
             vec3_t_2 result = triangle_triangle_intersection_non_coplanar(t1, t2);
             if (result.occupied > 0) {
                 puts("############");
-                printf("T1: %d, T2: %d\n", i, j);
-                vec3_small_array_print(&result);
+                self_intersection_result_t rr;
+                rr.t1_index = i;
+                rr.t2_index = j;
+                rr.result = result;
+                //printf("T1: %d, T2: %d\n", i, j);
+                // vec3_small_array_print(&result);
+                openmp_dynamic_array_append(&results, &rr);
             }
 #else // Algorithm 2: Only do edge-triangle intersections (DOES NOT WORK FOR NOW)
             for (int ei = 0; ei < 3; ei++) {
